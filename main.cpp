@@ -12,23 +12,22 @@ main() {
 
   std::cout << "ajout de 1" << std::endl;;
   t.push(1);
-  std::cout << "ajout de -10" << std::endl;
+  /*std::cout << std::endl << std::endl << "ajout de -10" << std::endl;
   t.push(-10);
 
-  std::cout << "ajout de -5" << std::endl;
-  t.push(-5);
-
-  std::cout << "ajout de -4" << std::endl;
-  t.push(-4);
-
-  std::cout << "ajout de -3" << std::endl;
-  t.push(-3);
-
+  std::cout << std::endl << std::endl << "ajout de -9" << std::endl;
+  t.push(-9);
+  *//*std::cout << "ajout de -8" << std::endl;
+  t.push(-8);
+  */
+  /*std::cout << "ajout de -13" << std::endl;
+    t.push(-13);*/
+  
   std::cout << "ajout de 15" << std::endl;
   t.push(15);
   std::cout << "ajout de 10" << std::endl;
   t.push(10);
-  std::cout << "ajout de 21" << std::endl;
+  /*std::cout << "ajout de 21" << std::endl;
   t.push(21);
   std::cout << "ajout de 23" << std::endl;
   t.push(23);
@@ -45,4 +44,11 @@ main() {
  -11	          23
   /
 -12
+
+	 1
+	   \
+	   15
+	  /
+	 10
+
 */

@@ -55,17 +55,28 @@ public:
       this->_root = newNode;
     } else {
       Node* t = this->__iterate<&AVLTree<T>::__canGoLeft, &AVLTree<T>::__canGoRight>(this->_root, value);
-      std::cout << "Add To :" << t->value() << std::endl;
-      if (t->value() < value) t->right(newNode);
-      else t->left(newNode);
+      if (t->value() < value) {
+	std::cout << "Add To :" << t->value() << " on Right" << std::endl;
+	t->right(newNode);
+      }
+      else {
+	std::cout << "Add To :" << t->value() << "on Left" << std::endl;
+	t->left(newNode);
+      }
       newNode->parent(t);
       newNode->height(0);
       t = this->__getNode< &AVLTree<T>::__isNotBalanced>((*this)._root);
       if (t != 0) {
-	std::cout << "NODE non equilibre : " << t->value() << " ZigZigDroit : " << this->__zigZigRight(t) << 
+	std::cout << "Desequilibre" << std::endl;
+	if (this->__zigZigRight(t) == true ||
+	    this->__zigZagRight(t) == true ||
+	    this->__zigZigLeft(t) == true ||
+	    this->__zigZagLeft(t) == true)
+	  return ;
+	/*std::cout << "NODE non equilibre : " << t->value() << " ZigZigDroit : " << this->__zigZigRight(t) << 
 	  " ZigZagDroit : " << this->__zigZagRight(t) << " ZigZigGauche : " << this->__zigZigLeft(t) <<
 	  " ZigZagGauche : " << this->__zigZagLeft(t) << std::endl;
-	exit(0);
+	  exit(0);*/
       }
     }
   }
@@ -75,8 +86,14 @@ public:
     else if (current == 0) this->applyToTree(func, this->_root);
     else {
       func(current->value());
-      if (current->left() != 0) this->applyToTree(func, current->left());
-      if (current->right() != 0) this->applyToTree(func, current->right());
+      if (current->left() != 0) {
+	std::cout << "Left" << std::endl;
+	this->applyToTree(func, current->left());
+      }
+      if (current->right() != 0) {
+	std::cout << "Right" << std::endl;
+	this->applyToTree(func, current->right());
+      }
     }
   }
 
@@ -123,14 +140,15 @@ Node*	__iterate(Node* current, const T& value) {
    }
 
   bool	__isNotBalanced(Node* current, const T&) {
+    std::cout << "Eq on " << current->value() << std::endl;
     if (current->left() != 0 && current->right() != 0) {
       int res = current->left()->height() - current->right()->height();
       if (res < -1 || res > 1) return true;
     }
-    else if (current->left() == 0 && current->right() && current->right()->height() > 1) {
+    else if (current->left() == 0 && current->right() && current->right()->height() >= 1) {
       return true;
     }
-    else if (current->right() == 0 && current->left() && current->left()->height() > 1) return true;
+    else if (current->right() == 0 && current->left() && current->left()->height() >= 1) return true;
     return false;
   }
 
@@ -148,9 +166,21 @@ Node*	__iterate(Node* current, const T& value) {
     std::cout << "Zig Zag Right on "<<node->value() << std::endl;
     if (node->left() == this->__maxHeight(node->left(), node->right()))
       return false;
-    node = node->right();
-    if (node->right() == this->__maxHeight(node->left(), node->right()))
+    if (node->right()->right() == this->__maxHeight(node->right()->left(), node->right()->right()))
       return false;
+
+    Node* swap = node->right()->left();
+
+    node->right()->left(node);
+    node = node->right();
+    node->left()->right(swap);
+    swap->parent(node->left());
+
+    if (node->left()->parent() == 0) {
+      node->parent(0);
+      this->_root = node;
+    }
+    node->left()->parent(node);
     return true;
   }
 
@@ -158,9 +188,16 @@ Node*	__iterate(Node* current, const T& value) {
     std::cout << "Zig Zig Left on "<< node->value() << std::endl;
     if (node->right() == this->__maxHeight(node->left(), node->right()))
       return false;
-    node = node->left();
-    if (node->right() == this->__maxHeight(node->left(), node->right()))
+    if (node->left()->right() == this->__maxHeight(node->left()->left(), node->left()->right()))
       return false;
+
+    Node* swap = node->left()->right();
+    if (swap != 0) swap->parent(node);
+    node->left()->right(node);
+    node->left()->parent(node->parent());
+    if (node->parent() == 0) this->_root = node->left();
+    node->left(swap);
+    node->parent(node->left());
     return true;
   }
 
@@ -168,9 +205,34 @@ Node*	__iterate(Node* current, const T& value) {
     std::cout << "Zig Zag Left on "<<node->value() << std::endl;
     if (node->right() == this->__maxHeight(node->left(), node->right()))
       return false;
-    node = node->left();
-    if (node->left() == this->__maxHeight(node->left(), node->right()))
+    if (node->left()->left() == this->__maxHeight(node->left()->left(), node->left()->right()))
       return false;
+
+    /*
+    //SIDA
+    std::cout << node->left() << std::endl;
+    std::cout << "GO" << std::endl;
+    Node* swap = node->left()->right()->left();
+    std::cout << "0" << std::endl;
+    node->left()->right()->left(node->left());
+
+    std::cout << "1" << std::endl;
+    node->left(node->left()->right());
+
+    std::cout << "2" << std::endl;
+    node->left()->left()->right(swap);
+    if (swap != 0) swap->parent(node->left()->left());
+
+    if (node->left()->right() != 0) {
+      std::cout << "3" << std::endl;
+      std::cout << "Value : " << node->left()->right()->value() << std::endl;
+      node->left()->right()->parent(node);
+    }
+    std::cout << "4" << std::endl;
+    node->left()->parent(node->left()->right());
+    std::cout << "Zig Zag Left !!!" << std::endl;
+    */
+//exit(0);
     return true;
   }
 
