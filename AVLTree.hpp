@@ -18,11 +18,17 @@ public:
 
     const Node*		left() const { return this->_left; }
     Node*		left() { return this->_left; }
-    void       		left(Node* left) { this->_left = left; }
+    void       		left(Node* left) {
+      this->_left = left;
+      if (left != 0) left->parent(this);
+    }
 
     const Node*		right() const { return this->_right; }
     Node*		right() { return this->_right; }
-    void       		right(Node* right) { this->_right = right; }
+    void       		right(Node* right) {
+      this->_right = right;
+      if (right != 0) right->parent(this);
+    }
 
     T&			value() { return this->_value; }
     void		value(const T& value) { this->_value = value; }
@@ -73,10 +79,6 @@ public:
 	    this->__zigZigLeft(t) == true ||
 	    this->__zigZagLeft(t) == true)
 	  return ;
-	/*std::cout << "NODE non equilibre : " << t->value() << " ZigZigDroit : " << this->__zigZigRight(t) << 
-	  " ZigZagDroit : " << this->__zigZagRight(t) << " ZigZigGauche : " << this->__zigZigLeft(t) <<
-	  " ZigZagGauche : " << this->__zigZagLeft(t) << std::endl;
-	  exit(0);*/
       }
     }
   }
@@ -87,11 +89,11 @@ public:
     else {
       func(current->value());
       if (current->left() != 0) {
-	std::cout << "Left" << std::endl;
+	std::cout << "Left of " << current->value() << std::endl;
 	this->applyToTree(func, current->left());
       }
       if (current->right() != 0) {
-	std::cout << "Right" << std::endl;
+	std::cout << "Right of " << current->value() << std::endl;
 	this->applyToTree(func, current->right());
       }
     }
@@ -163,18 +165,13 @@ Node*	__iterate(Node* current, const T& value) {
   }
 
   bool	__zigZigRightSwap(Node* node) {
-    Node* swap = node->right()->left();
-
-    node->right()->left(node);
-    node = node->right();
-    node->left()->right(swap);
-    if (swap != 0) swap->parent(node->left());
-
-    if (node->left()->parent() == 0) {
-      node->parent(0);
-      this->_root = node;
+    Node* swap = node->right();
+    node->right(swap->left());
+    if (node->parent() == 0) {
+      swap->parent(0);
+      this->_root = swap;
     }
-    node->left()->parent(node);
+    swap->left(node);
   }
 
   bool	__zigZagRight(Node* node) {
@@ -194,15 +191,14 @@ Node*	__iterate(Node* current, const T& value) {
     swap->right(node->right());
     node->right(swap);
 
-    swap->left(node);
-    node->right(0);
-
     if (node->parent() == 0) {
       this->_root = swap;
       swap->parent(0);
     } else {
       swap->parent(node->parent());
     }
+    swap->left(node);
+    node->right(0);
   }
 
   bool	__zigZigLeft(Node* node) {
@@ -216,13 +212,13 @@ Node*	__iterate(Node* current, const T& value) {
   }
 
   void	__zigZigLeftSwap(Node* node) {
-    Node* swap = node->left()->right();
-    if (swap != 0) swap->parent(node);
-    node->left()->right(node);
-    node->left()->parent(node->parent());
-    if (node->parent() == 0) this->_root = node->left();
-    node->left(swap);
-    node->parent(node->left());
+    Node* swap = node->left();
+    node->left(swap->right());
+    if (node->parent() == 0) {
+      swap->parent(0);
+      this->_root = swap;
+    }
+    swap->right(node);
   }
 
   bool	__zigZagLeft(Node* node) {
@@ -237,6 +233,17 @@ Node*	__iterate(Node* current, const T& value) {
 
   void	__zigZagLeftSwap(Node* node) {
     Node* swap = node->left()->right();
+    node->left()->right(swap->left());
+    swap->left(node->left());
+    node->left(0);
+
+    if (node->parent() == 0) {
+      swap->parent(0);
+      this->_root = swap;
+    }
+
+    swap->right(node);
+    /*Node* swap = node->left()->right();
     node->left()->right(node->left()->right()->left());
     swap->left(node->left());
     node->left(swap);
@@ -247,6 +254,7 @@ Node*	__iterate(Node* current, const T& value) {
     }
     swap->right(node);
     node->left(0);
+    */
   }
 
   Node*	__maxHeight(Node* node1, Node* node2) {
