@@ -25,8 +25,8 @@ main() {
   
   std::cout << "ajout de 15" << std::endl;
   t.push(15);
-  std::cout << "ajout de 10" << std::endl;
-  t.push(10);
+  std::cout << "ajout de 16" << std::endl;
+  t.push(16);
   /*std::cout << "ajout de 21" << std::endl;
   t.push(21);
   std::cout << "ajout de 23" << std::endl;

@@ -156,10 +156,25 @@ Node*	__iterate(Node* current, const T& value) {
     std::cout << "Zig Zig Right on "<<node->value() << std::endl;
     if (node->left() == this->__maxHeight(node->left(), node->right()))
       return false;
-    node = node->right();
-    if (node->left() == this->__maxHeight(node->left(), node->right()))
+    if (node->right()->left() == this->__maxHeight(node->right()->left(), node->right()->right()))
       return false;
+    this->__zigZigRightSwap(node);
     return true;
+  }
+
+  bool	__zigZigRightSwap(Node* node) {
+    Node* swap = node->right()->left();
+
+    node->right()->left(node);
+    node = node->right();
+    node->left()->right(swap);
+    if (swap != 0) swap->parent(node->left());
+
+    if (node->left()->parent() == 0) {
+      node->parent(0);
+      this->_root = node;
+    }
+    node->left()->parent(node);
   }
 
   bool	__zigZagRight(Node* node) {
@@ -168,7 +183,11 @@ Node*	__iterate(Node* current, const T& value) {
       return false;
     if (node->right()->right() == this->__maxHeight(node->right()->left(), node->right()->right()))
       return false;
+    this->__zigZagRightSwap(node);
+    return true;
+  }
 
+  void	__zigZagRightSwap(Node* node) {
     Node* swap = node->right()->left();
 
     node->right()->left(node);
@@ -181,7 +200,6 @@ Node*	__iterate(Node* current, const T& value) {
       this->_root = node;
     }
     node->left()->parent(node);
-    return true;
   }
 
   bool	__zigZigLeft(Node* node) {
@@ -190,7 +208,11 @@ Node*	__iterate(Node* current, const T& value) {
       return false;
     if (node->left()->right() == this->__maxHeight(node->left()->left(), node->left()->right()))
       return false;
+    this->__zigZigLeftSwap(node);
+    return true;
+  }
 
+  void	__zigZigLeftSwap(Node* node) {
     Node* swap = node->left()->right();
     if (swap != 0) swap->parent(node);
     node->left()->right(node);
@@ -198,7 +220,6 @@ Node*	__iterate(Node* current, const T& value) {
     if (node->parent() == 0) this->_root = node->left();
     node->left(swap);
     node->parent(node->left());
-    return true;
   }
 
   bool	__zigZagLeft(Node* node) {
