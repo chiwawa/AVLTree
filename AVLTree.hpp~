@@ -158,8 +158,8 @@ Node*	__iterate(Node* current, const T& value) {
     std::cout << "Zig Zig Left on "<< node->value() << std::endl;
     if (node->right() == this->__maxHeight(node->left(), node->right()))
       return false;
-    node = node->left();
-    if (node->right() == this->__maxHeight(node->left(), node->right()))
+    node = node->right();
+    if (node->left() == this->__maxHeight(node->left(), node->right()))
       return false;
     return true;
   }
@@ -168,8 +168,8 @@ Node*	__iterate(Node* current, const T& value) {
     std::cout << "Zig Zag Left on "<<node->value() << std::endl;
     if (node->right() == this->__maxHeight(node->left(), node->right()))
       return false;
-    node = node->left();
-    if (node->left() == this->__maxHeight(node->left(), node->right()))
+    node = node->right();
+    if (node->right() == this->__maxHeight(node->left(), node->right()))
       return false;
     return true;
   }
