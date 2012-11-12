@@ -190,16 +190,19 @@ Node*	__iterate(Node* current, const T& value) {
   void	__zigZagRightSwap(Node* node) {
     Node* swap = node->right()->left();
 
-    node->right()->left(node);
-    node = node->right();
-    node->left()->right(swap);
-    swap->parent(node->left());
+    node->right()->left(node->right()->left()->right());
+    swap->right(node->right());
+    node->right(swap);
 
-    if (node->left()->parent() == 0) {
-      node->parent(0);
-      this->_root = node;
+    swap->left(node);
+    node->right(0);
+
+    if (node->parent() == 0) {
+      this->_root = swap;
+      swap->parent(0);
+    } else {
+      swap->parent(node->parent());
     }
-    node->left()->parent(node);
   }
 
   bool	__zigZigLeft(Node* node) {
@@ -228,33 +231,22 @@ Node*	__iterate(Node* current, const T& value) {
       return false;
     if (node->left()->left() == this->__maxHeight(node->left()->left(), node->left()->right()))
       return false;
-
-    /*
-    //SIDA
-    std::cout << node->left() << std::endl;
-    std::cout << "GO" << std::endl;
-    Node* swap = node->left()->right()->left();
-    std::cout << "0" << std::endl;
-    node->left()->right()->left(node->left());
-
-    std::cout << "1" << std::endl;
-    node->left(node->left()->right());
-
-    std::cout << "2" << std::endl;
-    node->left()->left()->right(swap);
-    if (swap != 0) swap->parent(node->left()->left());
-
-    if (node->left()->right() != 0) {
-      std::cout << "3" << std::endl;
-      std::cout << "Value : " << node->left()->right()->value() << std::endl;
-      node->left()->right()->parent(node);
-    }
-    std::cout << "4" << std::endl;
-    node->left()->parent(node->left()->right());
-    std::cout << "Zig Zag Left !!!" << std::endl;
-    */
-//exit(0);
+    this->__zigZagLeftSwap(node);
     return true;
+  }
+
+  void	__zigZagLeftSwap(Node* node) {
+    Node* swap = node->left()->right();
+    node->left()->right(node->left()->right()->left());
+    swap->left(node->left());
+    node->left(swap);
+
+    if (node->parent() == 0) {
+      this->_root = swap;
+      swap->parent(0);
+    }
+    swap->right(node);
+    node->left(0);
   }
 
   Node*	__maxHeight(Node* node1, Node* node2) {
