@@ -78,7 +78,7 @@ public:
 	    this->__zigZagRight(t) == true ||
 	    this->__zigZigLeft(t) == true ||
 	    this->__zigZagLeft(t) == true)
-	  return ;
+	  std::cout << "New Height : " << this->__calcHeight(this->_root) << std::endl;;
       }
     }
   }
@@ -265,6 +265,13 @@ Node*	__iterate(Node* current, const T& value) {
     return node2;
   }
 
+  int	__calcHeight(Node* node) {
+    if (node == 0) return 0;
+    int left = 1 + this->__calcHeight(node->left());
+    int right = 1 + this->__calcHeight(node->right());
+    node->height( left + ((right - left) & (right > left)) - 1);
+    return node->height();
+  }
 
 private:
   Node*		_root;
